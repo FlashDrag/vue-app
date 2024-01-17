@@ -1,10 +1,11 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import './main.css';
+import "./main.css";
 import * as VueRouter from "vue-router";
 import ShoppingCartPage from "./pages/ShoppingCartPage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const router = VueRouter.createRouter({
   history: VueRouter.createWebHistory(process.env.BASE_URL),
@@ -20,6 +21,10 @@ const router = VueRouter.createRouter({
     {
       path: "/products/:productId",
       component: ProductDetailPage,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      component: NotFoundPage,
     },
   ],
 });
