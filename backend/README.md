@@ -157,6 +157,52 @@ $ mongosh
 > db.users.find()
 ```
 
+## Add MongoDB connection to the Express server
+- Install MongoDB driver
+```bash
+$ cd backend
+$ npm install mongodb
+```
+- Add mongoDB client to `src/server.js`
+```javascript
+import { MongoClient } from "mongodb";
+```
+- Add .env file to the root of the project with the following content:
+```bash
+# see the connection string in MongoDB Atlas "Connecting with MongoDB Driver"
+MONGO_DB_URL=mongodb+srv://<username>:<password>@<cluster-url>.mongodb.net/?retryWrites=true&w=majorityw=majority
+```
+- Install dotenv library to read the .env file
+```bash
+$ npm install dotenv
+```
+- Add dotenv to `src/server.js`
+```javascript
+import dotenv from "dotenv";
+dotenv.config();
+```
+- Add the following code to `src/server.js` to connect to the database
+```javascript
+const client = new MongoClient(process.env.MONGO_DB_URL);
+```
+- Connect to the database from the server. Inside each route, where we need to access the database, we need to add the following code:
+```javascript
+app.get("/products", async (req, res) => {
+  try {
+    await client.connect();
+    // connect to the database "fsv-db"
+    const db = client.db("fsv-db");
+    // get the collection "products" and convert it to an array
+    const products = await db.collection("products").find().toArray();
+    res.json(products);
+  } catch (error) {
+    console.log(error);
+  }
+});
+```
+
+
+
 
 
 

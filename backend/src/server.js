@@ -1,12 +1,17 @@
 import express from "express";
+import { MongoClient } from "mongodb";
 import {
   cartItems as cartItemsRaw,
   products as productsRaw,
 } from "./temp-data";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 let cartItems = cartItemsRaw;
 let products = productsRaw;
 
+const client = new MongoClient(process.env.MONGO_DB_URL);
 const app = express();
 app.use(express.json());
 
@@ -15,8 +20,17 @@ app.get("/hello", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/products", (req, res) => {
-  res.json(products);
+app.get("/products", async (req, res) => {
+  try {
+    await client.connect();
+    // connect to the database "fsv-db"
+    const db = client.db("fsv-db");
+    // get the collection "products" and convert it to an array
+    const products = await db.collection("products").find().toArray();
+    res.json(products);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 function populateCartIds(ids) {
