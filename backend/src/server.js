@@ -1,10 +1,25 @@
 import express from "express";
+import { cartItems, products } from "./temp-data";
 
 const app = express();
 
 // endpoint for testing
 app.get("/hello", (req, res) => {
   res.send("Hello World!");
+});
+
+app.get('/products', (req, res) => {
+  res.json(products);
+});
+
+app.get('/cart', (req, res) => {
+  res.json(cartItems);
+});
+
+app.get('/products/:productId', (req, res) => {
+  const productId = req.params.productId;
+  const product = products.find(product => product.id === productId);
+  res.json(product);
 });
 
 app.listen(8000, () => {
