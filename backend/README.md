@@ -50,3 +50,20 @@ app.listen(8000, () => {
 $ npx babel-node src/server.js
 ```
 - Open a browser and go to `http://localhost:8000/hello` to test the server
+
+## Setting up nodemon
+Helps us to automatically restart the server when we make changes to the code
+- Install nodemon
+```bash
+$ npm install --save-dev nodemon
+```
+- Add the following script to `package.json` to create a shortcut for running the server
+```json
+"scripts": {
+  "dev": "nodemon --exec babel-node src/server.js"
+}
+```
+- Run the server
+```bash
+$ npm run dev
+```
