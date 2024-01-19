@@ -50,10 +50,19 @@ async function start() {
     res.json(product);
   });
 
-  app.post("/cart", (req, res) => {
+  app.post("/users/:userId/cart", async (req, res) => {
+    const userId = req.params.userId;
     const productId = req.body.id;
-    cartItems.push(productId);
-    const populatedCart = populateCartIds(cartItems);
+
+    await db.collection("users").updateOne({ id: userId }, {
+      // push productId onto the user's cartItems property without dublicates
+      $addToSet: { cartItems: productId }
+    })
+
+    const user = await db
+      .collection("users")
+      .findOne({ id: req.params.userId });
+    const populatedCart = await populateCartIds(user.cartItems);
     res.json(populatedCart);
   });
 
