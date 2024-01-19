@@ -54,10 +54,13 @@ async function start() {
     const userId = req.params.userId;
     const productId = req.body.id;
 
-    await db.collection("users").updateOne({ id: userId }, {
-      // push productId onto the user's cartItems property without dublicates
-      $addToSet: { cartItems: productId }
-    })
+    await db.collection("users").updateOne(
+      { id: userId },
+      {
+        // push productId onto the user's cartItems property without dublicates
+        $addToSet: { cartItems: productId },
+      }
+    );
 
     const user = await db
       .collection("users")
@@ -66,10 +69,21 @@ async function start() {
     res.json(populatedCart);
   });
 
-  app.delete("/cart/:productId", (req, res) => {
+  app.delete("/users/:userId/cart/:productId", async (req, res) => {
+    const userId = req.params.userId;
     const productId = req.params.productId;
-    cartItems = cartItems.filter((id) => id !== productId);
-    const populatedCart = populateCartIds(cartItems);
+
+    await db.collection("users").updateOne(
+      { id: userId },
+      {
+        $pull: { cartItems: productId },
+      }
+    );
+
+    const user = await db
+      .collection("users")
+      .findOne({ id: req.params.userId });
+    const populatedCart = await populateCartIds(user.cartItems);
     res.json(populatedCart);
   });
 
@@ -77,6 +91,5 @@ async function start() {
     console.log("Server is running on port: 3000");
   });
 }
-
 
 start();
