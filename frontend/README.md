@@ -6,6 +6,12 @@
 cd frontend
 npm install axios
 ```
+- Add devServer proxy to vue.config.js
+```javascript
+devServer: {
+    proxy: "http://localhost:3000"
+}
+```
 
 ## Commands
 - Project setup
