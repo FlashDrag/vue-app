@@ -1,5 +1,6 @@
 import express from "express";
 import { MongoClient } from "mongodb";
+import path from "path";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -13,6 +14,9 @@ async function start() {
 
   const app = express();
   app.use(express.json());
+
+  app.use("/images", express.static(path.join(__dirname, "../assets")));
+
 
   // endpoint for testing
   app.get("/api/hello", (req, res) => {
