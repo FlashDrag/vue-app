@@ -39,6 +39,14 @@ export default {
       cartItems: [],
     };
   },
+  watch: {
+    async user(newUserValue) {
+      if (newUserValue) {
+        const cartResponse = await axios.get(`/api/users/${newUserValue.uid}/cart`);
+        this.cartItems = cartResponse.data;
+      }
+    }
+  },
   methods: {
     async addToCart() {
       await axios.post("/api/users/1/cart", {
@@ -72,8 +80,10 @@ export default {
     );
     this.product = response.data;
 
-    const cartResponse = await axios.get("/api/users/1/cart");
-    this.cartItems = cartResponse.data;
+    if (this.user) {
+      const cartResponse = await axios.get(`/api/users/${this.user.uid}/cart`);
+      this.cartItems = cartResponse.data;
+    }
   },
   computed: {
     itemIsInCart() {
