@@ -1,4 +1,4 @@
 # Vue Express Mongo App
+Simple ecommerce app with Vue.js frontend, Express.js backend and MongoDB database.
 
-## Frontend: [README.md](frontend/README.md)
-## Backend: [README.md](backend/README.md)
+See [frontend/README.md](frontend/README.md) and [backend/README.md](backend/README.md) for more details.

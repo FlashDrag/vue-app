@@ -136,7 +136,7 @@ $ mongosh
   - Type password for the user you created for the cluster
   - You are now connected to your cluster
 
-## Add data to MongoDB Atlas cloud database
+### Add data to MongoDB Atlas cloud database
 - Create a new database called 'fsv-db' or any name you want
 ```bash
 > use fsv-db
@@ -157,7 +157,7 @@ $ mongosh
 > db.users.find()
 ```
 
-## Add MongoDB connection to the Express server
+### Add MongoDB connection to the Express server
 - Install MongoDB driver
 ```bash
 $ cd backend
@@ -199,6 +199,15 @@ app.get("/products", async (req, res) => {
     console.log(error);
   }
 });
+```
+
+## Serving images from the server
+- Put all images in `backend/assets` folder
+- Add the following code to `src/server.js` to serve images from the server
+```javascript
+import path from "path";
+
+app.use("/images", express.static(path.join(__dirname, "../assets")));
 ```
 
 
