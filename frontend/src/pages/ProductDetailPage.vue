@@ -6,10 +6,10 @@
     <div class="product-details">
       <h1>{{ product.name }}</h1>
       <h3 class="price">{{ product.price }}</h3>
-      <button :disabled="itemIsInCart" @click="addToCart" class="add-to-cart">
-        Add to cart
+      <button v-if="user" :disabled="itemIsInCart" @click="addToCart" class="add-to-cart">
+        {{ itemIsInCart ? "Item is already in cart": "Add to cart"}}
       </button>
-      <button class="sign-in" @click="signIn">Sign in to add to cart</button>
+      <button v-if="!user" class="sign-in" @click="signIn">Sign in to add to cart</button>
     </div>
   </div>
   <div v-else>
@@ -29,6 +29,7 @@ import NotFoundPage from "./NotFoundPage";
 
 export default {
   name: "ProductDetailPage",
+  props: ["user"],
   components: {
     NotFoundPage,
   },
