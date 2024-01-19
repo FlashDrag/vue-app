@@ -6,9 +6,10 @@
     <div class="product-details">
       <h1>{{ product.name }}</h1>
       <h3 class="price">{{ product.price }}</h3>
-      <button :disabled="itemIsInCart" @click="addToCart" class="add-to-cart">
-        Add to cart
+      <button v-if="user" :disabled="itemIsInCart" @click="addToCart" class="add-to-cart">
+        {{ itemIsInCart ? "Item is already in cart": "Add to cart"}}
       </button>
+      <button v-if="!user" class="sign-in" @click="signIn">Sign in to add to cart</button>
     </div>
   </div>
   <div v-else>
@@ -17,11 +18,18 @@
 </template>
 
 <script>
+import {
+  getAuth,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+} from "firebase/auth";
 import axios from "axios";
 import NotFoundPage from "./NotFoundPage";
 
 export default {
   name: "ProductDetailPage",
+  props: ["user"],
   components: {
     NotFoundPage,
   },
@@ -31,22 +39,54 @@ export default {
       cartItems: [],
     };
   },
+  watch: {
+    async user(newUserValue) {
+      if (newUserValue) {
+        await this.fetchCartItems(newUserValue.uid);
+      }
+    }
+  },
   methods: {
     async addToCart() {
-      await axios.post("/api/users/1/cart", {
+      await axios.post(`/api/users/${this.user.uid}/cart`, {
         id: this.$route.params.productId,
       });
       alert("Successfully added item to cart!");
+      await this.fetchCartItems(this.user.uid);
+    },
+    async signIn() {
+      const email = prompt("Please enter your email to sign in:");
+      const auth = getAuth();
+      const actionCodeSettings = {
+        url: `http://localhost:8080/products/${this.$route.params.productId}`,
+        handleCodeInApp: true,
+      }
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      alert("A login link was sent to the email you provided");
+      window.localStorage.setItem("emailForSignIn", email);
+    },
+    async fetchCartItems(userId) {
+      const cartResponse = await axios.get(`/api/users/${userId}/cart`);
+      this.cartItems = cartResponse.data;
     },
   },
   async created() {
+    const auth = getAuth();
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      const email = window.localStorage.getItem("emailForSignIn");
+      await signInWithEmailLink(auth, email, window.location.href);
+      alert("Successfully signed in!");
+      window.localStorage.removeItem("emailForSignIn");
+    }
+
     const response = await axios.get(
       `/api/products/${this.$route.params.productId}`
     );
     this.product = response.data;
 
-    const cartResponse = await axios.get("/api/users/1/cart");
-    this.cartItems = cartResponse.data;
+    if (this.user) {
+      await this.fetchCartItems(this.user.uid);
+    }
   },
   computed: {
     itemIsInCart() {
