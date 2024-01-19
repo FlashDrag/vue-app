@@ -1,15 +1,9 @@
 import express from "express";
 import { MongoClient } from "mongodb";
-import {
-  cartItems as cartItemsRaw,
-  products as productsRaw,
-} from "./temp-data";
+
 import dotenv from "dotenv";
 dotenv.config();
 
-
-let cartItems = cartItemsRaw;
-let products = productsRaw;
 
 const client = new MongoClient(process.env.MONGO_DB_URL);
 const app = express();
@@ -33,18 +27,24 @@ app.get("/products", async (req, res) => {
   }
 });
 
-function populateCartIds(ids) {
-  return cartItems.map((id) => products.find((product) => product.id === id));
+async function populateCartIds(ids) {
+  await client.connect();
+  const db = client.db("fsv-db");
+  return Promise.all(ids.map(id => db.collection("products").findOne({ id })));
 }
 
-app.get("/cart", (req, res) => {
-  const populatedCart = populateCartIds(cartItems);
+app.get("/users/:userId/cart", async (req, res) => {
+  await client.connect();
+  const db = client.db("fsv-db");
+  const user = await db.collection("users").findOne({ id: req.params.userId });
+  const populatedCart = await populateCartIds(user.cartItems);
   res.json(populatedCart);
 });
 
-app.get("/products/:productId", (req, res) => {
-  const productId = req.params.productId;
-  const product = products.find((product) => product.id === productId);
+app.get("/products/:productId", async (req, res) => {
+  await client.connect();
+  const db = client.db("fsv-db");
+  const product = await db.collection("products").findOne({ id: req.params.productId})
   res.json(product);
 });
 
@@ -62,6 +62,6 @@ app.delete("/cart/:productId", (req, res) => {
   res.json(populatedCart);
 });
 
-app.listen(8000, () => {
-  console.log("Server is running on port: 8000");
+app.listen(3000, () => {
+  console.log("Server is running on port: 3000");
 });
