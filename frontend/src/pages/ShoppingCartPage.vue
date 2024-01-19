@@ -10,8 +10,8 @@
 </template>
 
 <script>
+import axios from "axios";
 import ShoppingCartList from "@/components/ShoppingCartList";
-import { cartItems } from "@/temp-data";
 
 export default {
   name: "ShoppingCartPage",
@@ -20,8 +20,12 @@ export default {
   },
   data() {
     return {
-      cartItems,
+      cartItems: [],
     };
   },
+  async created() {
+    const response = await axios.get('/api/users/1/cart');
+    this.cartItems = response.data;
+  }
 };
 </script>
