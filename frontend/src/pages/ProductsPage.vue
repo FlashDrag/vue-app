@@ -4,8 +4,8 @@
 </template>
 
 <script>
-import ProductsList from "@/components/ProductsList";
 import axios from "axios";
+import ProductsList from "@/components/ProductsList";
 
 export default {
   name: "ProductsPage",
