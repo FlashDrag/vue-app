@@ -42,8 +42,7 @@ export default {
   watch: {
     async user(newUserValue) {
       if (newUserValue) {
-        const cartResponse = await axios.get(`/api/users/${newUserValue.uid}/cart`);
-        this.cartItems = cartResponse.data;
+        await this.fetchCartItems(newUserValue.uid);
       }
     }
   },
@@ -53,6 +52,7 @@ export default {
         id: this.$route.params.productId,
       });
       alert("Successfully added item to cart!");
+      await this.fetchCartItems(this.user.uid);
     },
     async signIn() {
       const email = prompt("Please enter your email to sign in:");
@@ -64,6 +64,10 @@ export default {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       alert("A login link was sent to the email you provided");
       window.localStorage.setItem("emailForSignIn", email);
+    },
+    async fetchCartItems(userId) {
+      const cartResponse = await axios.get(`/api/users/${userId}/cart`);
+      this.cartItems = cartResponse.data;
     },
   },
   async created() {
@@ -81,8 +85,7 @@ export default {
     this.product = response.data;
 
     if (this.user) {
-      const cartResponse = await axios.get(`/api/users/${this.user.uid}/cart`);
-      this.cartItems = cartResponse.data;
+      await this.fetchCartItems(this.user.uid);
     }
   },
   computed: {

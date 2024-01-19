@@ -4,9 +4,10 @@ Simple ecommerce app with Vue.js frontend, Express.js backend, Firebase authenti
 See [frontend/README.md](frontend/README.md) and [backend/README.md](backend/README.md) for more details.
 
 ## Features
-- Products list
-- Product details
-- Cart
+- Products List
+- Product Details
+- Email Authentication (Firebase)
+- Managing Cart Items (Add, Remove) by authenticated users
 
 ## Local Deployment
 ### Prerequisites
