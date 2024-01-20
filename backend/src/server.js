@@ -17,6 +17,12 @@ async function start() {
 
   app.use("/images", express.static(path.join(__dirname, "../assets")));
 
+  app.use(
+    express.static(path.resolve(__dirname, "../dist"), {
+      maxAge: "1y",
+      etag: false,
+    })
+  );
 
   // endpoint for testing
   app.get("/api/hello", (req, res) => {
@@ -61,7 +67,7 @@ async function start() {
     const existingUser = await db.collection("users").findOne({ id: userId });
 
     if (!existingUser) {
-      await db.collection("users").insertOne({ id: userId, cartItems: [] })
+      await db.collection("users").insertOne({ id: userId, cartItems: [] });
     }
 
     await db.collection("users").updateOne(
@@ -97,8 +103,14 @@ async function start() {
     res.json(populatedCart);
   });
 
-  app.listen(3000, () => {
-    console.log("Server is running on port: 3000");
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../dist/index.html"));
+  })
+
+  const port = process.env.PORT || 3000;
+
+  app.listen(port, () => {
+    console.log("Server is running on port: " + port);
   });
 }
 
