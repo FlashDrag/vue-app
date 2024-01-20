@@ -47,18 +47,21 @@ npm run serve
     - Branch: `deployment`
     - Root Directory: `backend`
     - Runtime: `Node.js`
-    - Build Command: `npm install && npx babel ./src --out-dir ./build`
+    - Build Command: `npm run build`. It uses the script defined in `package.json` in the backend directory, see below.
     - Start Command: `node ./build/server.js`
     - Environment Variables:
         MONGO_DB_URL
 - Copy the web service URL
 - Replace the redirect URL in `frontend/src/pages/ProductDetailPage.vue -> signIn()` with the web service URL
-- Build the frontend
-```bash
-cd frontend
-npm run build
+- Add script for deployment build to `package.json` in the backend directory
+```json
+"scripts": {
+// ...
+"build": "cd ../frontend && npm run build && cp -r dist ../backend/dist && cd ../backend && npm install && npx babel ./src --out-dir ./build"
+},
 ```
-- Copy `frontend/dist` directory to `backend` directory
+It will build the frontend, copy the `dist` directory to the backend directory, install backend dependencies and build the backend. So you don't need to build the frontend manually and copy the `dist` directory to the backend directory.
+
 - Add the following lines to `backend/server.js`
 ```javascript
 app.use(express.static(path.resolve(__dirname, '../dist'), { maxAge: '1y', etag: false }))
