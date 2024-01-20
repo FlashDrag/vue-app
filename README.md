@@ -53,15 +53,22 @@ npm run serve
         MONGO_DB_URL
 - Copy the web service URL
 - Replace the redirect URL in `frontend/src/pages/ProductDetailPage.vue -> signIn()` with the web service URL
+- Create a frontend build
+```bash
+cd frontend
+npm run build
+```
+- Copy the `dist` directory to the backend directory
+```bash
+cp -r dist ../backend/dist
+```
 - Add script for deployment build to `package.json` in the backend directory
 ```json
 "scripts": {
 // ...
-"build": "cd ../frontend && npm run build && cp -r dist ../backend/dist && cd ../backend && npm install && npx babel ./src --out-dir ./build"
+"build": "npm install && npx babel ./src --out-dir ./build"
 },
 ```
-It will build the frontend, copy the `dist` directory to the backend directory, install backend dependencies and build the backend. So you don't need to build the frontend manually and copy the `dist` directory to the backend directory.
-
 - Add the following lines to `backend/server.js`
 ```javascript
 app.use(express.static(path.resolve(__dirname, '../dist'), { maxAge: '1y', etag: false }))
