@@ -66,4 +66,7 @@ app.use(express.static(path.resolve(__dirname, '../dist'), { maxAge: '1y', etag:
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 })
+- Add authorised domains to Firebase Authentication
+    - Go to Firebase Console -> Authentication -> Settings -> Authorized domains
+    - Add your web service URL
 ```
