@@ -57,13 +57,20 @@ export default {
     async signIn() {
       const email = prompt("Please enter your email to sign in:");
       const auth = getAuth();
+      // TODO: url should be dynamic. Try to use window.location.href
       const actionCodeSettings = {
-        url: `http://localhost:8080/products/${this.$route.params.productId}`,
+        url: `https://vue-app-deployment-nupf.onrender.com/products/${this.$route.params.productId}`,
         handleCodeInApp: true,
       }
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      alert("A login link was sent to the email you provided");
-      window.localStorage.setItem("emailForSignIn", email);
+      try {
+        await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+        alert("A login link was sent to the email you provided");
+        window.localStorage.setItem("emailForSignIn", email);
+      }
+      catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
     },
     async fetchCartItems(userId) {
       const cartResponse = await axios.get(`/api/users/${userId}/cart`);
