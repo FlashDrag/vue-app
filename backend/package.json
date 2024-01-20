@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --exec babel-node src/server.js",
-    "build": "cd ../frontend && npm run build && cp -r dist ../backend/dist && cd ../backend && npm install && npx babel ./src --out-dir ./build"
+    "build": "npm install && npx babel ./src --out-dir ./build"
   },
   "keywords": [],
   "author": "",
