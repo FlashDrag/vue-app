@@ -39,3 +39,31 @@ cd frontend
 npm run serve
 ```
 - Open http://localhost:8080 in your browser
+
+
+## Production Deployment (Render)
+- Create a new web service on Render
+- Connect the web service to your GitHub repository
+    - Branch: `deployment`
+    - Root Directory: `backend`
+    - Runtime: `Node.js`
+    - Build Command: `npm install && npx babel ./src --out-dir ./build`
+    - Start Command: `node ./build/server.js`
+    - Environment Variables:
+        MONGO_DB_URL
+- Copy the web service URL
+- Replace the redirect URL in `frontend/src/pages/ProductDetailPage.vue -> signIn()` with the web service URL
+- Build the frontend
+```bash
+cd frontend
+npm run build
+```
+- Copy `frontend/dist` directory to `backend` directory
+- Add the following lines to `backend/server.js`
+```javascript
+app.use(express.static(path.resolve(__dirname, '../dist'), { maxAge: '1y', etag: false }))
+// ...
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../dist/index.html"));
+})
+```
